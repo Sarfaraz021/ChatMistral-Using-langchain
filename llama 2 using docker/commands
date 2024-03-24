@@ -1,0 +1,12 @@
+docker run `
+--rm `
+--gpus all `
+--ipc=host `
+-p 8080:80 `
+-v ~/.cache/huggingface/hub:/data `
+-e HF_API_TOKEN=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 `
+ghcr.io/huggingface/text-generation-inference:0.9 `
+--hostname 0.0.0.0 `
+--model-id meta-llama/Llama-2-13b-chat-hf `
+--quantize bitsandbytes `
+--num-shard 4

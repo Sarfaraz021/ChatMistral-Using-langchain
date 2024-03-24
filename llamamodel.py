@@ -1,33 +1,32 @@
 from langchain.callbacks.manager import CallbackManager
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
-from langchain.chains import LLMChain
-from langchain.llms import LlamaCpp
-from langchain.prompts import PromptTemplate
+from langchain_community.llms import LlamaCpp
 
 
-# Callbacks support token-wise streaming
-
-def load_model() -> LlamaCpp:
-
-    callback_manager: CallbackManager = CallbackManager(
-        [StreamingStdOutCallbackHandler()])
-    Model_path = "C:\LLAMA2Locally\model\llama-2-13b-chat.Q3_K_M.gguf"
-    # Make sure the model path is correct for your system!
-    Llama_model: LlamaCpp = LlamaCpp(
-        model_path=Model_path,
-        temperature=0.75,
-        max_tokens=2000,
-        top_p=1,
+def load_model(model_path: str, temperature: float = 0.75, max_tokens: int = 2000, top_p: float = 1, verbose: bool = False) -> LlamaCpp:
+    callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
+    llama_model = LlamaCpp(
+        model_path=model_path,
+        temperature=temperature,
+        max_tokens=max_tokens,
+        top_p=top_p,
         callback_manager=callback_manager,
-        verbose=True  # Verbose is required to pass to the callback manager
+        verbose=verbose
     )
-    return Llama_model
+    return llama_model
 
 
-llm = load_model()
+def main():
+    model_path = "E:\\ChatMistral-Using-langchain\\llama-2-13b-chat-dutch.Q2_K.gguf"
+    llama = load_model(model_path)
 
-model_prompt: str = """
-Question: what is metaverse
-"""
+    while True:
+        prompt = input("Prompt: ")
+        if prompt.lower() == "exit":
+            break
+        else:
+            print(f"ChatBot: {llama.invoke(prompt)}")
 
-response: str = llm(model_prompt)
+
+if __name__ == "__main__":
+    main()
